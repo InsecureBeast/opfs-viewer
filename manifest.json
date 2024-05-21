@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "OPFS Observer Extension",
+  "version": "1.0",
+  "description": "Original private file system observer extension for Chrome.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "content_security_policy": "script-src 'self'; object-src 'self'",
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}
