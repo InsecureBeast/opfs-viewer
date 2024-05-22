@@ -11,12 +11,12 @@ module.exports = {
     contentScript: './src/contentScript.ts',
     popup: './src/popup.ts',
     options: './src/options.ts',
-    devtools: './src/devtools.ts'
+    devtools: './src/devtools.tsx'
   },
   module: {
     rules: [
       {
-        test: /\.(js|ts)x?$/,
+        test: /\.(js|ts|jsx|tsx)$/,
         use: ['babel-loader'],
         exclude: /node_modules/,
       },
@@ -27,7 +27,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
   },
   output: {
     filename: '[name].js',
