@@ -1,10 +1,13 @@
 import {
+  BsChevronBarRight,
+  BsChevronRight,
   BsFile,
   BsFilePdf,
   BsFiletypeDoc,
   BsFiletypeDocx,
   BsFillFolderFill,
   BsPencilSquare,
+  BsPlus,
   BsTrash,
 } from 'react-icons/bs';
 import { FileObserverNodeType } from './filesObserverNode';
@@ -24,6 +27,8 @@ export class IconsRegistry {
   static fileIcon = this.wrapIcon(<BsFile />, 'text-gray-500');
   static deleteIcon = this.wrapIcon(<BsTrash />);
   static editIcon = this.wrapIcon(<BsPencilSquare />);
+  static plusIcon = this.wrapIcon(<BsPlus />);
+  static breadcrumbsSeparator = this.wrapIcon(<BsChevronRight/>);
 
   static getIcon(type: FileObserverNodeType, name: string): JSX.Element {
     if (type === FileObserverNodeType.Directory) return this.folderIcon;

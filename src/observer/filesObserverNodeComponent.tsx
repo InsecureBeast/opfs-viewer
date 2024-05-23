@@ -10,11 +10,11 @@ export const FilesObserverNode: React.FC<IFileObserverNode> = (item) => {
           <span className="mr-1 flex items-center">
             { IconsRegistry.getIcon(item.type, item.name) }
           </span>
-          <span className=" hover:text-violet-400">{ item.name }</span>
+          <span className=" hover:text-indigo-500">{ item.name }</span>
         </a>
       </td>
       <td className="px-4 py-3">{ item.modified.toLocaleDateString(navigator.language, { year: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric' }) }</td>
-      <td className="px-4 py-3">{ item.size } Gb</td>
+      <td className="px-4 py-3">{ item.size.toFixed(2) } Gb</td>
       <td className="px-4 py-3 text-center">
         <a href="javascript:;" className="inline-block ltr:mr-2 rtl:ml-2 hover:text-red-500" title="Delete">
           { IconsRegistry.deleteIcon }

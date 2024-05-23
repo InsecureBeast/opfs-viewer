@@ -27,7 +27,7 @@ function createComponent(): void {
       id: randomString(),
       modified: new Date(Date.now()),
       name: Math.random().toString(),
-      size: Math.random(),
+      size: Math.random() * 100,
       type: Math.random() >= 0.5? 1 : 0
     };
     items.push(item);
