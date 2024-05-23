@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { FilesObserver, IFileObserverProps } from './observer/filesObserverComponent';
-import { IFileObserverNode } from './observer/filesObserverNode';
+import { FileObserverNodeType, IFileObserverNode } from './observer/filesObserverNode';
 
 import '../styles/devtools.scss';
+import { sortByNodeType } from './observer/sortingTools';
 
 if (chrome.devtools) {
   chrome.devtools.panels.create(
@@ -27,13 +28,13 @@ function createComponent(): void {
       modified: new Date(Date.now()),
       name: Math.random().toString(),
       size: Math.random(),
-      type: 0
+      type: Math.random() >= 0.5? 1 : 0
     };
     items.push(item);
   }
 
   const props: IFileObserverProps = {
-    items: items,
+    items: items.sort(sortByNodeType),
     breadcrumbs: []
   };
 
