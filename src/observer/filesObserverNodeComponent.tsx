@@ -8,7 +8,7 @@ export const FilesObserverNode: React.FC<IFileObserverNode> = (item) => {
       <td className="px-4 py-3">
         <a href="javascript:;" className="flex">
           <span className="mr-1 flex items-center">
-            {IconsRegistry.getIcon(item.type, item.name)}
+            { IconsRegistry.getIcon(item.type, item.name) }
           </span>
           <span className=" hover:text-violet-400">{ item.name }</span>
         </a>

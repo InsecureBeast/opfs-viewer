@@ -35,7 +35,7 @@ function createComponent(): void {
 
   const props: IFileObserverProps = {
     items: items.sort(sortByNodeType),
-    breadcrumbs: []
+    breadcrumbs: [ "Root", "Folder" ]
   };
 
   ReactDOM.createRoot(document.getElementById('react-container') as HTMLElement).render(
