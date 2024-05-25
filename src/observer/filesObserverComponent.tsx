@@ -1,13 +1,44 @@
 import { FilesObserverNode } from "./filesObserverNodeComponent";
 import { IFileObserverNode } from "./filesObserverNode";
-import { IconsRegistry } from "./iconsProvider";
+import React, { useEffect, useState } from "react";
+import { Opfs } from "../opfs/opfsReader";
+import { OpfsEntryConverter } from "./entryConverter";
+import { sortByNodeType } from "./sortingTools";
 
 export interface IFileObserverProps {
-  items: IFileObserverNode[];
-  breadcrumbs: string[];
+  parent: string;
+  opfs: Opfs;
 }
 
 export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
+  const [parent, setParent] = useState(() => props.parent);
+  const [items, setItems] = useState([] as IFileObserverNode[]);
+  const [breadcrumbs, setBreadcrumbs] = useState([props.parent]);
+
+  function onNodeClicked(node: IFileObserverNode): void {
+    setParent(node.name);
+    setBreadcrumbs([...breadcrumbs, node.name]);
+  }
+
+  function onBreadcrumbClicked(breadcrumb: string): void {
+    if (breadcrumb === parent)
+      return;
+    
+    setParent(breadcrumb);
+    const index = breadcrumbs.indexOf(breadcrumb);
+    const newBreadcrumbs = breadcrumbs.slice(0, index + 1);
+    setBreadcrumbs(newBreadcrumbs);
+  }
+
+  useEffect(() => {
+    async function apiCall() {
+      const children = await props.opfs.getChildren(parent)
+      console.log(children);
+      setItems(children.map(child => OpfsEntryConverter.toObserverNode(child)).sort(sortByNodeType));
+    }
+    apiCall();
+  }, [parent]);
+
   return (
   <div>
     {/* <a href="#" className="py-2 px-4 inline-block text-center mb-3 rounded leading-5 text-gray-100 bg-indigo-500 border border-indigo-500 hover:text-white hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 focus:bg-indigo-600 focus:border-indigo-600 focus:outline-none focus:ring-0">
@@ -18,13 +49,13 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
     <nav aria-label="breadcrumb" className="mb-3">
       <ol className="flex flex-wrap justify-start bg-transparent text-lg font-semibold text-gray-600 mb-0 space-x-1">
         {
-          props.breadcrumbs.map((bs) => (
+          breadcrumbs.map((bs) => (
             <li key={bs}>
-              <a href="#" className="hover:text-indigo-500 flex items-center">
+              <div className="hover:text-indigo-500 flex items-center cursor-pointer" onClick={() => onBreadcrumbClicked(bs)}>
                 <span className="ltr:mr-2">{ bs }</span>
                 {/* { IconsRegistry.breadcrumbsSeparator } */}
                 /
-              </a>
+              </div>
             </li>
           ))
         }
@@ -42,8 +73,8 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
       </thead>
       <tbody>
         { 
-          props.items.map((item) => (
-            <FilesObserverNode {...item} key={item.id} />
+          items.map((item) => (
+            <FilesObserverNode node={item} key={item.id} onClick={onNodeClicked} />
           ))
         }
       </tbody>

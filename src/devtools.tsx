@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { FilesObserver, IFileObserverProps } from './observer/filesObserverComponent';
-import { FileObserverNodeType, IFileObserverNode } from './observer/filesObserverNode';
 
 import '../styles/devtools.scss';
 import { sortByNodeType } from './observer/sortingTools';
@@ -23,23 +22,13 @@ if (chrome.devtools) {
   loadRoots();
 }
 
-function createComponent(roots: IOpfsEntry[]): void {
-  const items: IFileObserverNode[] = [];
-  for (let index = 0; roots.length > index; index++) {
-    const root = roots[index];
-    const item: IFileObserverNode = {
-      id: randomString(),
-      modified: new Date(Date.now()),
-      name: root.name,
-      size: root.kind === OpfsKind.Directory ?  0: Math.random() * 100,
-      type: root.kind === OpfsKind.Directory ?  FileObserverNodeType.Directory : FileObserverNodeType.File
-    };
-    items.push(item);
-  }
-
+// TODO:  move to conten script
+async function createComponent(opfs: Opfs): Promise<void> {
   const props: IFileObserverProps = {
-    items: items.sort(sortByNodeType),
-    breadcrumbs: [ "Root" ]
+    items: [],
+    breadcrumbs: [ "Root" ],
+    parent: "Root",
+    opfs: opfs
   };
 
   ReactDOM.createRoot(document.getElementById('react-container') as HTMLElement).render(
@@ -49,16 +38,14 @@ function createComponent(roots: IOpfsEntry[]): void {
   );
 }
 
-function randomString(): string {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-}
-
 function loadTabRoots(): void {
   chrome.tabs.sendMessage(
     chrome.devtools.inspectedWindow.tabId,
     { message: 'getRoots' },
-    (response) => {
-      createComponent([]);
+    async (response) => {
+      const opfs = new Opfs();
+      await opfs.init();
+      await createComponent(opfs);
     });
 }
 
@@ -74,8 +61,7 @@ async function createStructure(): Promise<void> {
 
 async function loadRoots(): Promise<void> {
   const opfs = new Opfs();
+  await opfs.init();
   createStructure();
-
-  const roots = await opfs.getRoots();
-  createComponent(roots);
+  await createComponent(opfs);
 }
