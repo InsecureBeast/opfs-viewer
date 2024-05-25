@@ -9,14 +9,14 @@ export interface FilesObserverNodeProps {
 
 export const FilesObserverNode: React.FC<FilesObserverNodeProps> = (props) => {
 
-  function handleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>): void {
-    props.onClick(props.node);
+  function handleClick(node: IFileObserverNode): void {
+    props.onClick(node);
   }
 
   return (
     <tr className="border-b border-gray-200 font-normal" >
       <td className="px-4 py-3">
-        <div onClick={handleClick} className="flex cursor-pointer">
+        <div onClick={() => handleClick(props.node)} className="flex cursor-pointer">
           <span className="mr-1 flex items-center">
             { IconsRegistry.getIcon(props.node.type, props.node.name) }
           </span>

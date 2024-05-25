@@ -44,9 +44,13 @@ export class Opfs {
   async init(): Promise<void> {
     await this.getRoot();
   }
-  
-  async getRoots(): Promise<IOpfsEntry[]> {
-    const directoryHandle = await navigator.storage.getDirectory();
+
+  async getChildren(name: string): Promise<IOpfsEntry[]> {
+    const entry = this._directoryHandles.get(name);
+    if (!entry)
+      return [];
+
+    const directoryHandle = entry.handle;
     const entries = [];
     for await (const [name, handle] of directoryHandle as any) {
       const h = handle as FileSystemHandle;
@@ -59,36 +63,10 @@ export class Opfs {
         entry = new OfpsFileEntry(name, handle);
         this._fileHandles.set(entry.name, entry as OfpsFileEntry);
       }
-      entries.push(entry);
-    }
-    return entries;
-  }
-
-  async getChildren(name: string): Promise<IOpfsEntry[]> {
-    const entry = this._directoryHandles.get(name);
-    if (!entry)
-      return [];
-
-    const directoryHandle = entry.handle;
-    const entries = [];
-    for await (const [name, handle] of directoryHandle as any) {
-      const h = handle as FileSystemHandle;
-      let entry: IOpfsEntry;
-      if (h.kind === "directory")
-        entry = new OfpsDirectoryEntry(name, handle);
-      else
-        entry = new OfpsFileEntry(name, handle);
       
       entries.push(entry);
     }
     return entries;
-  }
-
-  async getRoot(): Promise<IOpfsDirectoryEntry> {
-    const directoryHandle = await navigator.storage.getDirectory();
-    const entry = new OfpsDirectoryEntry("Root", directoryHandle);
-    this._directoryHandles.set(entry.name, entry);
-    return entry;
   }
 
   async createDirectory(parent: IOpfsDirectoryEntry, name: string): Promise<IOpfsDirectoryEntry> {
@@ -97,6 +75,13 @@ export class Opfs {
       { create: true },
     );
     const entry = new OfpsDirectoryEntry(name, nestedDirectoryHandle);
+    this._directoryHandles.set(entry.name, entry);
+    return entry;
+  }
+
+  private async getRoot(): Promise<IOpfsDirectoryEntry> {
+    const directoryHandle = await navigator.storage.getDirectory();
+    const entry = new OfpsDirectoryEntry("Root", directoryHandle);
     this._directoryHandles.set(entry.name, entry);
     return entry;
   }
