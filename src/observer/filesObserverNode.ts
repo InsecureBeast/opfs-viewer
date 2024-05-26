@@ -6,7 +6,7 @@ export enum FileObserverNodeType {
 export interface IFileObserverNode {
   id: string;
   name: string;
-  modified: Date;
-  size: number;
+  modified?: string;
+  size?: string;
   type: FileObserverNodeType;
 }

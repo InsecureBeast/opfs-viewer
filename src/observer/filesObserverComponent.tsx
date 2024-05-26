@@ -33,6 +33,8 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
   useEffect(() => {
     async function apiCall() {
       const children = await props.getChildren(parent)
+      if (!children)
+        return;
       setItems(children.map(child => OpfsEntryConverter.toObserverNode(child)).sort(sortByNodeType));
     }
     apiCall();

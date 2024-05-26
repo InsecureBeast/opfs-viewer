@@ -1,5 +1,5 @@
 import React from "react";
-import { IFileObserverNode } from "./filesObserverNode";
+import { FileObserverNodeType, IFileObserverNode } from "./filesObserverNode";
 import { IconsRegistry } from "./iconsProvider";
 
 export interface FilesObserverNodeProps {
@@ -10,7 +10,8 @@ export interface FilesObserverNodeProps {
 export const FilesObserverNode: React.FC<FilesObserverNodeProps> = (props) => {
 
   function handleClick(node: IFileObserverNode): void {
-    props.onClick(node);
+    if (node.type === FileObserverNodeType.Directory)
+      props.onClick(node);
   }
 
   return (
@@ -23,8 +24,8 @@ export const FilesObserverNode: React.FC<FilesObserverNodeProps> = (props) => {
           <span className=" hover:text-indigo-500">{ props.node.name }</span>
         </div>
       </td>
-      <td className="px-4 py-3">{ props.node.modified.toLocaleDateString(navigator.language, { year: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric' }) }</td>
-      <td className="px-4 py-3">{ props.node.size.toFixed(2) } Gb</td>
+      <td className="px-4 py-3">{ props.node.modified }</td>
+      <td className="px-4 py-3">{ props.node.size }</td>
       <td className="px-4 py-3 text-center">
         <a href="#" className="inline-block ltr:mr-2 rtl:ml-2 hover:text-red-500" title="Delete">
           { IconsRegistry.deleteIcon }

@@ -6,62 +6,60 @@ export enum OpfsKind {
 }
 export interface IOpfsEntry {
   name: string;
-  handle: FileSystemHandle;
   kind: OpfsKind;
 }
 
 export interface IOpfsDirectoryEntry extends IOpfsEntry {
   name: string;
-  handle: FileSystemDirectoryHandle;
   kind: OpfsKind;
 }
 
 export interface IOpfsFileEntry extends IOpfsEntry {
   name: string;
-  handle: FileSystemFileHandle;
   kind: OpfsKind.File;
+  modified: number;
+  size: number;
 }
 
 export class OfpsDirectoryEntry implements IOpfsDirectoryEntry {
   kind: OpfsKind;
-  constructor(public name: string, public handle: FileSystemDirectoryHandle) {
+  constructor(public name: string) {
     this.kind = OpfsKind.Directory;
   }
 }
 
 export class OfpsFileEntry implements IOpfsFileEntry {
   kind: OpfsKind.File;
-  constructor(public name: string, public handle: FileSystemFileHandle) {
+  constructor(public name: string, public modified: number, public size: number) {
     this.kind = OpfsKind.File
   }
 }
 
-
 export class Opfs {
-  private readonly _directoryHandles = new Map<string, IOpfsDirectoryEntry>;
-  private readonly _fileHandles = new Map<string, IOpfsFileEntry>;
+  private readonly _directoryHandles = new Map<string, FileSystemDirectoryHandle>;
+  private readonly _fileHandles = new Map<string, FileSystemFileHandle>;
 
   async init(): Promise<void> {
     await this.getRoot();
   }
 
   async getChildren(name: string): Promise<IOpfsEntry[]> {
-    const entry = this._directoryHandles.get(name);
-    if (!entry)
+    const directoryHandle = this._directoryHandles.get(name);
+    if (!directoryHandle)
       return [];
 
-    const directoryHandle = entry.handle;
     const entries = [];
     for await (const [name, handle] of directoryHandle as any) {
       const h = handle as FileSystemHandle;
       let entry: IOpfsEntry;
       if (h.kind === "directory") {
-        entry = new OfpsDirectoryEntry(name, handle);
-        this._directoryHandles.set(entry.name, entry as OfpsDirectoryEntry);
+        entry = new OfpsDirectoryEntry(name);
+        this._directoryHandles.set(entry.name, directoryHandle);
       }
       else {
-        entry = new OfpsFileEntry(name, handle);
-        this._fileHandles.set(entry.name, entry as OfpsFileEntry);
+        const file = await (<FileSystemFileHandle>h).getFile();
+        entry = new OfpsFileEntry(name, file.lastModified, file.size);
+        this._fileHandles.set(entry.name, handle);
       }
       
       entries.push(entry);
@@ -69,30 +67,41 @@ export class Opfs {
     return entries;
   }
 
-  async createDirectory(parent: IOpfsDirectoryEntry, name: string): Promise<IOpfsDirectoryEntry> {
-    const nestedDirectoryHandle = await parent.handle.getDirectoryHandle(
+  async createDirectory(parent: string, name: string): Promise<IOpfsDirectoryEntry> {
+    const directoryHandle = this.getParentHandle(parent);
+    const nestedDirectoryHandle = await directoryHandle.getDirectoryHandle(
       name,
       { create: true },
     );
-    const entry = new OfpsDirectoryEntry(name, nestedDirectoryHandle);
-    this._directoryHandles.set(entry.name, entry);
+    const entry = new OfpsDirectoryEntry(name);
+    this._directoryHandles.set(entry.name, nestedDirectoryHandle);
     return entry;
   }
 
-  async createFile(parent: IOpfsDirectoryEntry, name: string): Promise<IOpfsFileEntry> {
-    const nestedDirectoryHandle = await parent.handle.getFileHandle(
+  async createFile(parent: string, name: string): Promise<IOpfsFileEntry> {
+    const directoryHandle = this.getParentHandle(parent);
+    const nestedDirectoryHandle = await directoryHandle.getFileHandle(
       name,
       { create: true },
     );
-    const entry = new OfpsFileEntry(name, nestedDirectoryHandle);
-    this._fileHandles.set(entry.name, entry);
+    const file = await nestedDirectoryHandle.getFile();
+    const entry = new OfpsFileEntry(name, file.lastModified, file.size);
+    this._fileHandles.set(entry.name, nestedDirectoryHandle);
     return entry;
   }
 
   async getRoot(): Promise<IOpfsDirectoryEntry> {
     const directoryHandle = await navigator.storage.getDirectory();
-    const entry = new OfpsDirectoryEntry("Root", directoryHandle);
-    this._directoryHandles.set(entry.name, entry);
+    const entry = new OfpsDirectoryEntry("Root");
+    this._directoryHandles.set(entry.name, directoryHandle);
     return entry;
+  }
+
+  private getParentHandle(name: string): FileSystemDirectoryHandle {
+    const directoryHandle = this._directoryHandles.get(name);
+    if (!directoryHandle)
+      throw new Error("Parent not found");
+
+    return directoryHandle;
   }
 }
