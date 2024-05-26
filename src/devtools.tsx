@@ -3,32 +3,46 @@ import ReactDOM from 'react-dom/client';
 import { FilesObserver, IFileObserverProps } from './observer/filesObserverComponent';
 
 import '../styles/devtools.scss';
-import { sortByNodeType } from './observer/sortingTools';
-import { IOpfsEntry, Opfs, OpfsKind } from './opfs/opfsReader';
+import { IOpfsEntry } from './opfs/opfsReader';
+import { Messages } from './data/messages';
 
 if (chrome.devtools) {
   chrome.devtools.panels.create(
     "OPFS-Observer",
     "",
     "devtools.html",
-    (/*panel*/) => {
-      // Panel initialization logic here
-      //createComponent();
-      //loadTabRoots();
-      loadRoots();
+    async (/*panel*/) => {
+      await createComponent();
     }
   );
 } else {
-  loadRoots();
+  createComponent();
 }
 
-// TODO:  move to conten script
-async function createComponent(opfs: Opfs): Promise<void> {
+async function getChildren(parent: string): Promise<IOpfsEntry[]> {
+  return new Promise((resolve) => {
+    if (!chrome.devtools) {
+      resolve([]);
+      return;
+    }
+
+    chrome.tabs.sendMessage(
+      chrome.devtools.inspectedWindow.tabId,
+      { 
+        message: Messages.GetChildren, 
+        data: parent,
+      },
+      (response => {
+        resolve(response);
+      })
+    );
+  });
+}
+
+async function createComponent(): Promise<void> {
   const props: IFileObserverProps = {
-    items: [],
-    breadcrumbs: [ "Root" ],
     parent: "Root",
-    opfs: opfs
+    getChildren
   };
 
   ReactDOM.createRoot(document.getElementById('react-container') as HTMLElement).render(
@@ -36,32 +50,4 @@ async function createComponent(opfs: Opfs): Promise<void> {
       <FilesObserver {...props}/>
     </React.StrictMode>
   );
-}
-
-function loadTabRoots(): void {
-  chrome.tabs.sendMessage(
-    chrome.devtools.inspectedWindow.tabId,
-    { message: 'getRoots' },
-    async (response) => {
-      const opfs = new Opfs();
-      await opfs.init();
-      await createComponent(opfs);
-    });
-}
-
-async function createStructure(): Promise<void> {
-  const opfs = new Opfs();
-  const root = await opfs.getRoot();
-  await opfs.createDirectory(root, "Folder 1");
-  await opfs.createDirectory(root, "Folder 2");
-  const folder3 = await opfs.createDirectory(root, "Folder 3");
-  opfs.createDirectory(folder3, "Folder 3.1");
-}
-
-
-async function loadRoots(): Promise<void> {
-  const opfs = new Opfs();
-  await opfs.init();
-  createStructure();
-  await createComponent(opfs);
 }

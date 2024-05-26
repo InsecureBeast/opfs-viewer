@@ -1,13 +1,13 @@
 import { FilesObserverNode } from "./filesObserverNodeComponent";
 import { IFileObserverNode } from "./filesObserverNode";
 import React, { useEffect, useState } from "react";
-import { Opfs } from "../opfs/opfsReader";
+import { IOpfsEntry } from "../opfs/opfsReader";
 import { OpfsEntryConverter } from "./entryConverter";
 import { sortByNodeType } from "./sortingTools";
 
 export interface IFileObserverProps {
   parent: string;
-  opfs: Opfs;
+  getChildren: (parent: string) => Promise<IOpfsEntry[]>;
 }
 
 export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
@@ -32,8 +32,7 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
 
   useEffect(() => {
     async function apiCall() {
-      const children = await props.opfs.getChildren(parent)
-      console.log(children);
+      const children = await props.getChildren(parent)
       setItems(children.map(child => OpfsEntryConverter.toObserverNode(child)).sort(sortByNodeType));
     }
     apiCall();

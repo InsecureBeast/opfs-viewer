@@ -6,6 +6,12 @@ chrome.runtime.onInstalled.addListener(async () => {
   await initializeStorageWithDefaults({});
 
   console.log('Extension successfully installed!');
+  // chrome.tabs.sendMessage(
+  //   chrome.devtools.inspectedWindow.tabId,
+  //   { 
+  //     message: Messages.Init
+  //   }
+  //   );
 });
 
 // Log storage changes, might be safely removed

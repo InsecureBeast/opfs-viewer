@@ -79,7 +79,17 @@ export class Opfs {
     return entry;
   }
 
-  private async getRoot(): Promise<IOpfsDirectoryEntry> {
+  async createFile(parent: IOpfsDirectoryEntry, name: string): Promise<IOpfsFileEntry> {
+    const nestedDirectoryHandle = await parent.handle.getFileHandle(
+      name,
+      { create: true },
+    );
+    const entry = new OfpsFileEntry(name, nestedDirectoryHandle);
+    this._fileHandles.set(entry.name, entry);
+    return entry;
+  }
+
+  async getRoot(): Promise<IOpfsDirectoryEntry> {
     const directoryHandle = await navigator.storage.getDirectory();
     const entry = new OfpsDirectoryEntry("Root", directoryHandle);
     this._directoryHandles.set(entry.name, entry);
