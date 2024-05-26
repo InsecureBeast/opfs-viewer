@@ -54,7 +54,7 @@ export class Opfs {
       let entry: IOpfsEntry;
       if (h.kind === "directory") {
         entry = new OfpsDirectoryEntry(name);
-        this._directoryHandles.set(entry.name, directoryHandle);
+        this._directoryHandles.set(entry.name, handle);
       }
       else {
         const file = await (<FileSystemFileHandle>h).getFile();

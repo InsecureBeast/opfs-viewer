@@ -35,7 +35,10 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
       const children = await props.getChildren(parent)
       if (!children)
         return;
-      setItems(children.map(child => OpfsEntryConverter.toObserverNode(child)).sort(sortByNodeType));
+      const sortedChildren = children
+        .map(child => OpfsEntryConverter.toObserverNode(child))
+        .sort(sortByNodeType);
+      setItems(sortedChildren);
     }
     apiCall();
   }, [parent]);
@@ -66,9 +69,9 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
     <table className="table-auto min-w-full ltr:text-left rtl:text-right text-sm">
       <thead className="bg-violet-50">
         <tr>
-          <th className="px-4 py-3 font-normal text-left">File name</th>
-          <th className="px-4 py-3 font-normal text-left">Last modified</th>
-          <th className="px-4 py-3 font-normal text-left">File size</th>
+          <th className="px-4 py-3 font-normal text-left">Name</th>
+          <th className="px-4 py-3 font-normal text-left">Date modified</th>
+          <th className="px-4 py-3 font-normal text-left">Size</th>
           <th className="px-4 py-3 font-normal text-center">Action</th>
         </tr>
       </thead>

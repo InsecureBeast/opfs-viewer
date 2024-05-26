@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { IOpfsEntry, IOpfsFileEntry, OpfsKind } from "../opfs/opfsReader";
 import { FileObserverNodeType, IFileObserverNode } from "./filesObserverNode";
 
@@ -5,7 +6,7 @@ export class OpfsEntryConverter {
 
   static toObserverNode(entry: IOpfsEntry): IFileObserverNode {
     const item: IFileObserverNode = {
-      id: this.randomString(),
+      id: uuidv4(),
       name: entry.name,
       type: entry.kind === OpfsKind.Directory ?  FileObserverNodeType.Directory : FileObserverNodeType.File
     };
