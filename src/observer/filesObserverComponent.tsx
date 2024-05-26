@@ -51,7 +51,7 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
     </a> */}
 
     <nav aria-label="breadcrumb" className="mb-3">
-      <ol className="flex flex-wrap justify-start bg-transparent text-lg font-semibold text-gray-600 mb-0 space-x-1">
+      <ol className="flex flex-wrap justify-start bg-transparent text-lg font-semibold text-gray-600 mb-0 space-x-1 dark:text-gray-200">
         {
           breadcrumbs.map((bs) => (
             <li key={bs}>
@@ -67,7 +67,7 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
     </nav>
 
     <table className="table-auto min-w-full ltr:text-left rtl:text-right text-sm">
-      <thead className="bg-violet-50">
+      <thead className="bg-violet-50 dark:bg-neutral-950 dark:bg-opacity-30">
         <tr>
           <th className="px-4 py-3 font-normal text-left">Name</th>
           <th className="px-4 py-3 font-normal text-left">Date modified</th>

@@ -3,6 +3,7 @@ import {
   BsChevronRight,
   BsDatabaseFill,
   BsFile,
+  BsFileEarmarkImage,
   BsFilePdf,
   BsFileText,
   BsFileTextFill,
@@ -33,7 +34,7 @@ export class IconsRegistry {
     ['pdf', this.wrapIcon(<BsFilePdf />, 'text-red-500')],
     ['doc', this.wrapIcon(<BsFillFileEarmarkWordFill />, 'text-indigo-600')],
     ['docx', this.wrapIcon(<BsFillFileEarmarkWordFill />, 'text-indigo-600')],
-    ['img', this.wrapIcon(<BsCardImage />, 'text-violet-500')],
+    ['img', this.wrapIcon(<BsFileEarmarkImage />, 'text-violet-500')],
     ['zip', this.wrapIcon(<BsFileZipFill />, 'text-amber-400')],
     ['csv', this.wrapIcon(<BsTable />, 'text-green-600')],
     ['xls', this.wrapIcon(<BsTable />, 'text-green-600')],
@@ -54,7 +55,7 @@ export class IconsRegistry {
   ]);
 
   static folderIcon = this.wrapIcon(<BsFillFolderFill />, 'text-indigo-500');
-  static fileIcon = this.wrapIcon(<BsFileText />, 'text-gray-500');
+  static fileIcon = this.wrapIcon(<BsFileText />, 'text-gray-500 dark:text-gray-400');
   static deleteIcon = this.wrapIcon(<BsTrash />);
   static editIcon = this.wrapIcon(<BsPencilSquare />);
   static plusIcon = this.wrapIcon(<BsPlus />);

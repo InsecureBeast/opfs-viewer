@@ -15,7 +15,7 @@ export const FilesObserverNode: React.FC<FilesObserverNodeProps> = (props) => {
   }
 
   return (
-    <tr className="border-b border-gray-200 font-normal" >
+    <tr className="border-b border-gray-200 dark:border-neutral-800 font-normal" >
       <td className="px-4 py-3">
         <div onClick={() => handleClick(props.node)} className="flex cursor-pointer">
           <span className="mr-1 flex items-center">
