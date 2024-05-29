@@ -1,14 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import { IOpfsEntry, IOpfsFileEntry, OpfsKind } from "../opfs/opfsReader";
-import { FileObserverNodeType, IFileObserverNode } from "./filesObserverNode";
+import { NodeType, INode } from "./INode";
 
 export class OpfsEntryConverter {
 
-  static toObserverNode(entry: IOpfsEntry): IFileObserverNode {
-    const item: IFileObserverNode = {
+  static toviewerNode(entry: IOpfsEntry): INode {
+    const item: INode = {
       id: uuidv4(),
       name: entry.name,
-      type: entry.kind === OpfsKind.Directory ?  FileObserverNodeType.Directory : FileObserverNodeType.File
+      type: entry.kind === OpfsKind.Directory ?  NodeType.Directory : NodeType.File
     };
 
     if (entry.kind === OpfsKind.File) {

@@ -26,7 +26,7 @@ import {
   BsTable,
   BsTrash,
 } from 'react-icons/bs';
-import { FileObserverNodeType } from './filesObserverNode';
+import { NodeType } from './INode';
 import { IconContext } from 'react-icons';
 
 export class IconsRegistry {
@@ -54,16 +54,17 @@ export class IconsRegistry {
      */
   ]);
 
-  static folderIcon = this.wrapIcon(<BsFillFolderFill />, 'text-indigo-500');
+  static folderIcon = this.wrapIcon(<BsFillFolderFill />, 'text-amber-600');
   static fileIcon = this.wrapIcon(<BsFileText />, 'text-gray-500 dark:text-gray-400');
   static deleteIcon = this.wrapIcon(<BsTrash />);
   static editIcon = this.wrapIcon(<BsPencilSquare />);
   static plusIcon = this.wrapIcon(<BsPlus />);
   static breadcrumbsSeparator = this.wrapIcon(<BsChevronRight/>);
 
-  static getIcon(type: FileObserverNodeType, name: string): JSX.Element {
-    if (type === FileObserverNodeType.Directory) return this.folderIcon;
-    else return this.getIconByExt(name);
+  static getIcon(type: NodeType, name: string): JSX.Element {
+    return type === NodeType.Directory 
+      ? this.folderIcon
+      : this.getIconByExt(name);
   }
 
   private static getIconByExt(name: string): JSX.Element {

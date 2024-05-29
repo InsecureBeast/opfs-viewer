@@ -1,21 +1,30 @@
-import { FilesObserverNode } from "./filesObserverNodeComponent";
-import { IFileObserverNode } from "./filesObserverNode";
 import React, { useEffect, useState } from "react";
 import { IOpfsEntry } from "../opfs/opfsReader";
 import { OpfsEntryConverter } from "./entryConverter";
 import { sortByNodeType } from "./sortingTools";
+import { INode } from "./INode";
+import { FilesViewerNode } from "./filesViewerNodeComponent";
 
-export interface IFileObserverProps {
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
+export interface IFileViewerProps {
   parent: string;
   getChildren: (parent: string) => Promise<IOpfsEntry[]>;
 }
 
-export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
+export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
   const [parent, setParent] = useState(() => props.parent);
-  const [items, setItems] = useState([] as IFileObserverNode[]);
+  const [items, setItems] = useState([] as INode[]);
   const [breadcrumbs, setBreadcrumbs] = useState([props.parent]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function onNodeClicked(node: IFileObserverNode): void {
+  function isDark(): boolean {
+    return (localStorage.theme === 'dark' || (!('theme' in localStorage) && 
+            window.matchMedia('(prefers-color-scheme: dark)').matches));
+  }
+
+  function onNodeClicked(node: INode): void {
     setParent(node.name);
     setBreadcrumbs([...breadcrumbs, node.name]);
   }
@@ -32,12 +41,16 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
 
   useEffect(() => {
     async function apiCall() {
+      setItems([]);
+      setIsLoading(true);
       const children = await props.getChildren(parent)
       if (!children)
         return;
       const sortedChildren = children
-        .map(child => OpfsEntryConverter.toObserverNode(child))
+        .map(child => OpfsEntryConverter.toviewerNode(child))
         .sort(sortByNodeType);
+      
+      setIsLoading(false);
       setItems(sortedChildren);
     }
     apiCall();
@@ -55,7 +68,7 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
         {
           breadcrumbs.map((bs) => (
             <li key={bs}>
-              <div className="hover:text-indigo-500 flex items-center cursor-pointer" onClick={() => onBreadcrumbClicked(bs)}>
+              <div className="hover:hover:text-amber-600 flex items-center cursor-pointer" onClick={() => onBreadcrumbClicked(bs)}>
                 <span className="ltr:mr-2">{ bs }</span>
                 {/* { IconsRegistry.breadcrumbsSeparator } */}
                 /
@@ -67,9 +80,9 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
     </nav>
 
     <table className="table-auto min-w-full ltr:text-left rtl:text-right text-sm">
-      <thead className="bg-violet-50 dark:bg-neutral-950 dark:bg-opacity-30">
+      <thead className="dark:text-gray-500">
         <tr>
-          <th className="px-4 py-3 font-normal text-left">Name</th>
+          <th className="pr-4 py-3 font-normal text-left">Name</th>
           <th className="px-4 py-3 font-normal text-left">Date modified</th>
           <th className="px-4 py-3 font-normal text-left">Size</th>
           <th className="px-4 py-3 font-normal text-center">Action</th>
@@ -78,11 +91,19 @@ export const FilesObserver: React.FC<IFileObserverProps> = (props) => {
       <tbody>
         { 
           items.map((item) => (
-            <FilesObserverNode node={item} key={item.id} onClick={onNodeClicked} />
+            <FilesViewerNode node={item} key={item.id} onClick={onNodeClicked} />
           ))
         }
       </tbody>
     </table>
+      {
+        isLoading &&
+          <Skeleton count={10} 
+                    height={20} 
+                    className="my-3" 
+                    baseColor={ isDark() ? "#202020" : "#ebebeb"} 
+                    highlightColor={ isDark() ? "#444" : "#f5f5f5"}/>
+      }
   </div>
   );
 };

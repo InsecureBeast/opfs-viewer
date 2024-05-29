@@ -1,27 +1,27 @@
 import React from "react";
-import { FileObserverNodeType, IFileObserverNode } from "./filesObserverNode";
 import { IconsRegistry } from "./iconsProvider";
+import { NodeType, INode } from "./INode";
 
-export interface FilesObserverNodeProps {
-  node: IFileObserverNode;
-  onClick: (node: IFileObserverNode) => void;
+export interface FilesViewerNodeProps {
+  node: INode;
+  onClick: (node: INode) => void;
 }
 
-export const FilesObserverNode: React.FC<FilesObserverNodeProps> = (props) => {
+export const FilesViewerNode: React.FC<FilesViewerNodeProps> = (props) => {
 
-  function handleClick(node: IFileObserverNode): void {
-    if (node.type === FileObserverNodeType.Directory)
+  function handleClick(node: INode): void {
+    if (node.type === NodeType.Directory)
       props.onClick(node);
   }
 
   return (
     <tr className="border-b border-gray-200 dark:border-neutral-800 font-normal" >
-      <td className="px-4 py-3">
+      <td className="pr-4 py-3">
         <div onClick={() => handleClick(props.node)} className="flex cursor-pointer">
           <span className="mr-1 flex items-center">
             { IconsRegistry.getIcon(props.node.type, props.node.name) }
           </span>
-          <span className=" hover:text-indigo-500">{ props.node.name }</span>
+          <span className="hover:text-amber-600">{ props.node.name }</span>
         </div>
       </td>
       <td className="px-4 py-3">{ props.node.modified }</td>

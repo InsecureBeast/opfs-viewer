@@ -1,6 +1,6 @@
 {
-  "name": "opfs-observer",
-  "description": "Original private file system observer extension for Chrome",
+  "name": "opfs-viewer",
+  "description": "Original private file system viewer extension for Chrome",
   "version": "1.0.0",
   "manifest_version": 3,
   "devtools_page": "devtools.html",
@@ -13,21 +13,6 @@
       "js": ["contentScript.js"]
     }
   ],
-  "permissions": ["storage", "scripting"],
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
-  },
-  "action": {
-    "default_title": "Original private file system observer extension for Chrome",
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "/icons/16x.png",
-      "32": "/icons/32x.png",
-      "48": "/icons/48x.png",
-      "128": "/icons/128x.png"
-    }
-  },
   "icons": {
     "16": "/icons/16x.png",
     "32": "/icons/32x.png",

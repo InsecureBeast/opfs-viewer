@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { FilesObserver, IFileObserverProps } from './observer/filesObserverComponent';
 
 import '../styles/devtools.scss';
 import { IOpfsEntry } from './opfs/opfsReader';
 import { Messages } from './data/messages';
+import { Filesviewer, IFileViewerProps } from './observer/filesViewerComponent';
 
 if (chrome.devtools) {
   chrome.devtools.panels.create(
-    "OPFS-Observer",
+    "OPFS-Viewer",
     "",
     "devtools.html",
     async (/*panel*/) => {
@@ -40,14 +40,14 @@ async function getChildren(parent: string): Promise<IOpfsEntry[]> {
 }
 
 async function createComponent(): Promise<void> {
-  const props: IFileObserverProps = {
+  const props: IFileViewerProps = {
     parent: "Root",
     getChildren
   };
 
   ReactDOM.createRoot(document.getElementById('react-container') as HTMLElement).render(
     <React.StrictMode>
-      <FilesObserver {...props}/>
+      <Filesviewer {...props}/>
     </React.StrictMode>
   );
 }
