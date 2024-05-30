@@ -115,7 +115,6 @@ export class Opfs {
       }
       directoryHandle = await directoryHandle.getDirectoryHandle(element);
     }
-    console.log(split);
   }
 
   private getParentHandle(name: string): FileSystemDirectoryHandle {
