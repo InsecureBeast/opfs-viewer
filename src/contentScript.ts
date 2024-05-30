@@ -1,18 +1,30 @@
-import { MessageRequest, Messages } from "./data/messages";
+import { IMessageRequest, IRenameMessageData, Messages } from "./data/messages";
 import { Opfs } from "./opfs/opfsReader";
 
 const opfs = new Opfs();
 opfs.init();
 
-async function asyncFunctionWithAwait(request: MessageRequest, sender: unknown, sendResponse: (response?: unknown) => void): Promise<void> {
+async function asyncFunctionWithAwait(request: IMessageRequest, sender: unknown, sendResponse: (response?: unknown) => void): Promise<void> {
   if (request.message === Messages.Init) {
     await opfs.init();
-    console.log("init")
     return;
   }
   if (request.message === Messages.GetChildren) {
     const children = await opfs.getChildren(request.data as string);
     sendResponse(children); 
+    return;
+  }
+
+  if (request.message === Messages.Delete) {
+    await opfs.delete(request.data as string)
+    sendResponse();
+    return;
+  }
+
+  if (request.message === Messages.Rename) {
+    await opfs.rename(request.data as IRenameMessageData)
+    sendResponse();
+    return;
   }
 }
 

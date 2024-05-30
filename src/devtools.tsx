@@ -5,6 +5,7 @@ import '../styles/devtools.scss';
 import { IOpfsEntry } from './opfs/opfsReader';
 import { Messages } from './data/messages';
 import { Filesviewer, IFileViewerProps } from './observer/filesViewerComponent';
+import { sendMessage } from './data/messageSender';
 
 if (chrome.devtools) {
   chrome.devtools.panels.create(
@@ -20,29 +21,18 @@ if (chrome.devtools) {
 }
 
 async function getChildren(parent: string): Promise<IOpfsEntry[]> {
-  return new Promise((resolve) => {
-    if (!chrome.devtools) {
-      resolve([]);
-      return;
-    }
+  return sendMessage(Messages.GetChildren, parent);
+}
 
-    chrome.tabs.sendMessage(
-      chrome.devtools.inspectedWindow.tabId,
-      { 
-        message: Messages.GetChildren, 
-        data: parent,
-      },
-      (response => {
-        resolve(response);
-      })
-    );
-  });
+function onDelete(path:string): Promise<void> {
+  return sendMessage(Messages.Delete, path);
 }
 
 async function createComponent(): Promise<void> {
   const props: IFileViewerProps = {
     parent: "Root",
-    getChildren
+    getChildren,
+    onDelete
   };
 
   ReactDOM.createRoot(document.getElementById('react-container') as HTMLElement).render(

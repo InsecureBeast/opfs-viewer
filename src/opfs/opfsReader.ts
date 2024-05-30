@@ -1,3 +1,4 @@
+import { IRenameMessageData } from "src/data/messages";
 
 export enum OpfsKind {
   "Unknown",
@@ -95,6 +96,26 @@ export class Opfs {
     const entry = new OfpsDirectoryEntry("Root");
     this._directoryHandles.set(entry.name, directoryHandle);
     return entry;
+  }
+
+  rename(data: IRenameMessageData): Promise<void> {
+    console.log(data);
+    return Promise.resolve();
+  }
+
+  async delete(filename: string): Promise<void> {
+    const split = filename.split("/");
+    split.shift();
+    let directoryHandle = await navigator.storage.getDirectory();
+    for (let index = 0; index < split.length; index++) {
+      const element = split[index];
+      if (index === split.length - 1) {
+        await directoryHandle.removeEntry(element, {recursive: true})
+        return;
+      }
+      directoryHandle = await directoryHandle.getDirectoryHandle(element);
+    }
+    console.log(split);
   }
 
   private getParentHandle(name: string): FileSystemDirectoryHandle {

@@ -1,14 +1,21 @@
 
-export interface MessageRequest {
+export interface IMessageRequest {
   message: string;
   data: unknown;
 }
 
-export interface MessageResponse {
+export interface IMessageResponse {
   data: unknown;
 }
 
 export enum Messages {
   GetChildren = 'getChildren',
-  Init = 'init'
+  Init = 'init',
+  Delete = 'delete',
+  Rename = 'rename'
+}
+
+export interface IRenameMessageData {
+  path: string;
+  newName: string; 
 }

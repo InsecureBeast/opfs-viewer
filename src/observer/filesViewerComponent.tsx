@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import { IOpfsEntry } from "../opfs/opfsReader";
 import { OpfsEntryConverter } from "./entryConverter";
 import { sortByNodeType } from "./sortingTools";
 import { INode } from "./INode";
 import { FilesViewerNode } from "./filesViewerNodeComponent";
 
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
+import '../tools/arrayTools';
 
 export interface IFileViewerProps {
   parent: string;
   getChildren: (parent: string) => Promise<IOpfsEntry[]>;
+  onDelete(path: string): Promise<void>;
 }
 
 export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
@@ -27,6 +30,17 @@ export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
   function onNodeClicked(node: INode): void {
     setParent(node.name);
     setBreadcrumbs([...breadcrumbs, node.name]);
+  }
+
+  async function onNodeDeleted(node: INode): Promise<void> {
+    const parents = breadcrumbs.join("/");
+    const path = `${parents}/${node.name}`;
+    await props.onDelete(path);
+    items.remove(node);
+    setItems([...items]);
+  }
+
+  function onNodeRenamed(node: INode, newName: string): void {
   }
 
   function onBreadcrumbClicked(breadcrumb: string): void {
@@ -91,7 +105,10 @@ export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
       <tbody>
         { 
           items.map((item) => (
-            <FilesViewerNode node={item} key={item.id} onClick={onNodeClicked} />
+            <FilesViewerNode node={item} key={item.id} 
+                             onClick={onNodeClicked} 
+                             onDelete={onNodeDeleted} 
+                             onRename={onNodeRenamed}/>
           ))
         }
       </tbody>
