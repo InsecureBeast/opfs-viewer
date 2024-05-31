@@ -5,7 +5,11 @@ export default {
     './static/*html'
   ],
   theme: {
-    extend: {},
+    extend: {
+      padding: {
+        '3px': '3px',
+      }
+    },
   },
   plugins: [],
 }

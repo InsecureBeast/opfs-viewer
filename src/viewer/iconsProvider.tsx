@@ -59,7 +59,7 @@ export class IconsRegistry {
   static deleteIcon = this.wrapIcon(<BsTrash />);
   static editIcon = this.wrapIcon(<BsPencilSquare />);
   static plusIcon = this.wrapIcon(<BsPlus />);
-  static breadcrumbsSeparator = this.wrapIcon(<BsChevronRight/>);
+  static breadcrumbsSeparator = this.wrapIcon(<BsChevronRight/>, undefined, "breadcrumbs-separator");
 
   static getIcon(type: NodeType, name: string): JSX.Element {
     return type === NodeType.Directory 
@@ -82,9 +82,10 @@ export class IconsRegistry {
   private static wrapIcon(
     icon: JSX.Element,
     colorClassName?: string,
+    className?: string
   ): JSX.Element {
     return (
-      <IconContext.Provider value={{ className: `fo-icons ${colorClassName}` }}>
+      <IconContext.Provider value={{ className: className ?? `fo-icons ${colorClassName}` }}>
         {icon}
       </IconContext.Provider>
     );

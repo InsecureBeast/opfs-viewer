@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { IconsRegistry } from "./iconsProvider";
-import { NodeType, INode } from "./INode";
+import { IconsRegistry } from "../iconsProvider";
+import { NodeType, INode } from "../INode";
 
-export interface FilesViewerNodeProps {
+export interface ViewerNodeProps {
   node: INode;
   onClick: (node: INode) => void;
   onDelete: (node: INode) => void;
   onRename: (node: INode, newName: string) => void;
 }
 
-export const FilesViewerNode: React.FC<FilesViewerNodeProps> = (props) => {
+export const ViewerNode: React.FC<ViewerNodeProps> = (props) => {
   const [isDeleting, setIsDeletenig]  = useState(false);
 
   function handleClick(node: INode): void {
@@ -30,7 +30,7 @@ export const FilesViewerNode: React.FC<FilesViewerNodeProps> = (props) => {
     <tr className="border-b border-gray-200 dark:border-neutral-800 font-normal" >
       <td className="pr-4 py-3 relative">
         <div onClick={() => handleClick(props.node)} 
-             className="flex cursor-pointer">
+             className="flex items-center cursor-pointer">
           <span className="mr-1 flex">
             { IconsRegistry.getIcon(props.node.type, props.node.name) }
           </span>

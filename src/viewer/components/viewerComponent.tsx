@@ -2,22 +2,23 @@ import React, { useEffect, useState } from "react";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
-import { IOpfsEntry } from "../opfs/opfs";
-import { OpfsEntryConverter } from "./entryConverter";
-import { sortByNodeType } from "./sortingTools";
-import { INode } from "./INode";
-import { FilesViewerNode } from "./filesViewerNodeComponent";
+import { IOpfsEntry } from "../../opfs/opfs";
+import { OpfsEntryConverter } from "../entryConverter";
+import { sortByNodeType } from "../sortingTools";
+import { INode } from "../INode";
+import { ViewerNode } from "../components/viewerNodeComponent";
 
-import '../tools/arrayTools';
+import '../../tools/arrayTools';
+import { IconsRegistry } from "../iconsProvider";
 
-export interface IFileViewerProps {
+export interface IViewerProps {
   parent: string;
   getChildren: (parent: string) => Promise<IOpfsEntry[]>;
   onDelete(path: string): Promise<void>;
 }
 
 let interval: NodeJS.Timeout;
-export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
+export const Viewer: React.FC<IViewerProps> = (props) => {
   const [parent, setParent] = useState(() => props.parent);
   const [items, setItems] = useState([] as INode[]);
   const [breadcrumbs, setBreadcrumbs] = useState([props.parent]);
@@ -80,9 +81,11 @@ export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
     }
     
     apiCall();
+    
     if (interval)
       clearInterval(interval);
     interval = setInterval(updateChildrenSilent, 3000);
+
   }, [parent]);
 
   return (
@@ -99,8 +102,7 @@ export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
             <li key={bs}>
               <div className="hover:hover:text-amber-600 flex items-center cursor-pointer" onClick={() => onBreadcrumbClicked(bs)}>
                 <span className="ltr:mr-2">{ bs }</span>
-                {/* { IconsRegistry.breadcrumbsSeparator } */}
-                /
+                <i className="pt-[3px]">{ IconsRegistry.breadcrumbsSeparator }</i>
               </div>
             </li>
           ))
@@ -120,7 +122,7 @@ export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
       <tbody>
         { 
           items.map((item) => (
-            <FilesViewerNode node={item} key={item.id} 
+            <ViewerNode node={item} key={item.id} 
                              onClick={onNodeClicked} 
                              onDelete={onNodeDeleted} 
                              onRename={onNodeRenamed}/>

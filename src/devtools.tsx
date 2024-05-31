@@ -4,12 +4,12 @@ import ReactDOM from 'react-dom/client';
 import '../styles/devtools.scss';
 import { IOpfsEntry } from './opfs/opfs';
 import { Messages } from './data/messages';
-import { Filesviewer, IFileViewerProps } from './observer/filesViewerComponent';
+import { Viewer, IViewerProps } from './viewer/components/viewerComponent';
 import { sendMessage } from './data/messageSender';
 
 if (chrome.devtools) {
   chrome.devtools.panels.create(
-    "OPFS-Viewer",
+    "OPFS Viewer",
     "",
     "devtools.html",
     async (/*panel*/) => {
@@ -34,7 +34,7 @@ function onDelete(path:string): Promise<void> {
 }
 
 async function createComponent(): Promise<void> {
-  const props: IFileViewerProps = {
+  const props: IViewerProps = {
     parent: "Root",
     getChildren,
     onDelete
@@ -42,7 +42,7 @@ async function createComponent(): Promise<void> {
 
   ReactDOM.createRoot(document.getElementById('react-container') as HTMLElement).render(
     <React.StrictMode>
-      <Filesviewer {...props}/>
+      <Viewer {...props}/>
     </React.StrictMode>
   );
 }
