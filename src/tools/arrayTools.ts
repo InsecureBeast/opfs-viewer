@@ -9,7 +9,7 @@ declare global {
 
 Object.defineProperty(Array.prototype, "remove", {
   enumerable : false,
-  value: function(this, v: any) {
+  value: function(this, v: unknown) {
     const index = this.indexOf(v);
     if (index >= 0) {
       this.splice(index, 1);

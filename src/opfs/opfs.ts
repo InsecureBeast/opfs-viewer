@@ -46,6 +46,7 @@ export class Opfs {
     this.isInit = true;
   }
 
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   async getChildren(name: string): Promise<IOpfsEntry[]> {
     this.checkInitialize();
 
