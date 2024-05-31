@@ -1,10 +1,15 @@
 import { IMessageRequest, IRenameMessageData, Messages } from "./data/messages";
-import { Opfs } from "./opfs/opfsReader";
+import { Opfs } from "./opfs/opfs";
 
 const opfs = new Opfs();
 opfs.init();
 
 async function asyncFunctionWithAwait(request: IMessageRequest, sender: unknown, sendResponse: (response?: unknown) => void): Promise<void> {
+  if (request.message === Messages.CheckSecureContext){
+    sendResponse(self.isSecureContext);
+    return;
+  }
+
   if (request.message === Messages.Init) {
     await opfs.init();
     return;
@@ -33,13 +38,3 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   asyncFunctionWithAwait(request, sender, sendResponse);
   return true;
 });
-
-async function createStructure(): Promise<void> {
-  const opfs = new Opfs();
-  const root = await opfs.getRoot();
-  await opfs.createDirectory(root.name, "Folder 1");
-  await opfs.createDirectory(root.name, "Folder 2");
-  const folder3 = await opfs.createDirectory(root.name, "Folder 3");
-  opfs.createDirectory(folder3.name, "Folder 3.1");
-  opfs.createFile(root.name, "file 1");
-} 

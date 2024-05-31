@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { IOpfsEntry, IOpfsFileEntry, OpfsKind } from "../opfs/opfsReader";
+import { IOpfsEntry, IOpfsFileEntry, OpfsKind } from "../opfs/opfs";
 import { NodeType, INode } from "./INode";
 
 export class OpfsEntryConverter {

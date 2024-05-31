@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
-import { IOpfsEntry } from "../opfs/opfsReader";
+import { IOpfsEntry } from "../opfs/opfs";
 import { OpfsEntryConverter } from "./entryConverter";
 import { sortByNodeType } from "./sortingTools";
 import { INode } from "./INode";
@@ -53,19 +53,29 @@ export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
     setBreadcrumbs(newBreadcrumbs);
   }
 
+  async function updateChildrenSilent(): Promise<void> {
+    const children = await getChildren(parent)
+    setItems(children);
+  }
+
+  async function getChildren(parent: string): Promise<INode[]> {
+    const children = await props.getChildren(parent)
+      if (!children)
+        return [];
+
+      const sortedChildren = children
+        .map(child => OpfsEntryConverter.toviewerNode(child))
+        .sort(sortByNodeType);
+      return sortedChildren;
+  }
+
   useEffect(() => {
     async function apiCall() {
       setItems([]);
       setIsLoading(true);
-      const children = await props.getChildren(parent)
-      if (!children)
-        return;
-      const sortedChildren = children
-        .map(child => OpfsEntryConverter.toviewerNode(child))
-        .sort(sortByNodeType);
-      
+      const children = await getChildren(parent)
       setIsLoading(false);
-      setItems(sortedChildren);
+      setItems(children);
     }
     apiCall();
   }, [parent]);

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import '../styles/devtools.scss';
-import { IOpfsEntry } from './opfs/opfsReader';
+import { IOpfsEntry } from './opfs/opfs';
 import { Messages } from './data/messages';
 import { Filesviewer, IFileViewerProps } from './observer/filesViewerComponent';
 import { sendMessage } from './data/messageSender';
@@ -13,6 +13,11 @@ if (chrome.devtools) {
     "",
     "devtools.html",
     async (/*panel*/) => {
+      const inSecureContext = await sendMessage(Messages.CheckSecureContext);
+      if (!inSecureContext) {
+        createNotSupportedComponent();
+        return;
+      }
       await createComponent();
     }
   );
@@ -38,6 +43,14 @@ async function createComponent(): Promise<void> {
   ReactDOM.createRoot(document.getElementById('react-container') as HTMLElement).render(
     <React.StrictMode>
       <Filesviewer {...props}/>
+    </React.StrictMode>
+  );
+}
+
+function createNotSupportedComponent(): void {
+  ReactDOM.createRoot(document.getElementById('react-container') as HTMLElement).render(
+    <React.StrictMode>
+      <div>OPFS is not supported in an insecure context.</div>
     </React.StrictMode>
   );
 }

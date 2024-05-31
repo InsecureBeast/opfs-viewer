@@ -39,12 +39,16 @@ export class OfpsFileEntry implements IOpfsFileEntry {
 export class Opfs {
   private readonly _directoryHandles = new Map<string, FileSystemDirectoryHandle>;
   private readonly _fileHandles = new Map<string, FileSystemFileHandle>;
+  isInit = false;
 
   async init(): Promise<void> {
-    await this.getRoot();
+    await this.getRoot();  
+    this.isInit = true;
   }
 
   async getChildren(name: string): Promise<IOpfsEntry[]> {
+    this.checkInitialize();
+
     const directoryHandle = this._directoryHandles.get(name);
     if (!directoryHandle)
       return [];
@@ -69,6 +73,8 @@ export class Opfs {
   }
 
   async createDirectory(parent: string, name: string): Promise<IOpfsDirectoryEntry> {
+    this.checkInitialize();
+    
     const directoryHandle = this.getParentHandle(parent);
     const nestedDirectoryHandle = await directoryHandle.getDirectoryHandle(
       name,
@@ -80,6 +86,8 @@ export class Opfs {
   }
 
   async createFile(parent: string, name: string): Promise<IOpfsFileEntry> {
+    this.checkInitialize();
+
     const directoryHandle = this.getParentHandle(parent);
     const nestedDirectoryHandle = await directoryHandle.getFileHandle(
       name,
@@ -91,19 +99,16 @@ export class Opfs {
     return entry;
   }
 
-  async getRoot(): Promise<IOpfsDirectoryEntry> {
-    const directoryHandle = await navigator.storage.getDirectory();
-    const entry = new OfpsDirectoryEntry("Root");
-    this._directoryHandles.set(entry.name, directoryHandle);
-    return entry;
-  }
-
   rename(data: IRenameMessageData): Promise<void> {
+    this.checkInitialize();
+
     console.log(data);
     return Promise.resolve();
   }
 
   async delete(filename: string): Promise<void> {
+    this.checkInitialize();
+
     const split = filename.split("/");
     split.shift();
     let directoryHandle = await navigator.storage.getDirectory();
@@ -117,11 +122,24 @@ export class Opfs {
     }
   }
 
+  private async getRoot(): Promise<IOpfsDirectoryEntry> {
+    const directoryHandle = await navigator.storage.getDirectory();
+    const entry = new OfpsDirectoryEntry("Root");
+    this._directoryHandles.set(entry.name, directoryHandle);
+    return entry;
+  }
+
+
   private getParentHandle(name: string): FileSystemDirectoryHandle {
     const directoryHandle = this._directoryHandles.get(name);
     if (!directoryHandle)
       throw new Error("Parent not found");
 
     return directoryHandle;
+  }
+
+  private checkInitialize(): void {
+    if (!this.isInit)
+      throw new Error("Opfs is not initialized");
   }
 }

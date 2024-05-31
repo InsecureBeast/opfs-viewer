@@ -1,5 +1,5 @@
 
-export function sendMessage<Data, ResponseData>(name: string, data: Data): Promise<ResponseData> {
+export function sendMessage<Data, ResponseData>(name: string, data?: Data): Promise<ResponseData> {
   return new Promise<ResponseData>((resolve) => {
     if (!chrome.devtools) {
       throw new Error("Chrome devtools is not available.");

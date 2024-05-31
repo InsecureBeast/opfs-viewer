@@ -12,7 +12,8 @@ export enum Messages {
   GetChildren = 'getChildren',
   Init = 'init',
   Delete = 'delete',
-  Rename = 'rename'
+  Rename = 'rename',
+  CheckSecureContext = 'checkSecureContext'
 }
 
 export interface IRenameMessageData {
