@@ -4,9 +4,6 @@
   "version": "1.0.0",
   "manifest_version": 3,
   "devtools_page": "devtools.html",
-  "background": {
-    "service_worker": "serviceWorker.js"
-  },
   "content_scripts": [
     {
       "matches": [
