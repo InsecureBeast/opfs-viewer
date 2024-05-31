@@ -16,6 +16,7 @@ export interface IFileViewerProps {
   onDelete(path: string): Promise<void>;
 }
 
+let interval: NodeJS.Timeout;
 export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
   const [parent, setParent] = useState(() => props.parent);
   const [items, setItems] = useState([] as INode[]);
@@ -77,7 +78,11 @@ export const Filesviewer: React.FC<IFileViewerProps> = (props) => {
       setIsLoading(false);
       setItems(children);
     }
+    
     apiCall();
+    if (interval)
+      clearInterval(interval);
+    interval = setInterval(updateChildrenSilent, 3000);
   }, [parent]);
 
   return (
