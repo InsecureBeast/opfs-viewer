@@ -1,7 +1,7 @@
 {
   "name": "OPFS Viewer",
   "description": "OPFS Viewer is a original private file system viewer extension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "devtools_page": "devtools.html",
   "content_scripts": [
